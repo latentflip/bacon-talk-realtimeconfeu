@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <title>Markdown Presenter</title>
+    <style>
+      html, body {
+        margin:0;
+        border:0;
+        padding:0;
+      }
+      div.centered {
+        margin:auto;
+        font-size:40px;
+        width:20em; /* So we get about 10 words per line */
+      }
+      .slideCount {
+        position: absolute;
+        bottom: 1em;
+        right: 1em;
+      }
+
+      /* My styling here */
+     /* End styling */
+    </style>
+    <script type="text/javascript" src="presenter/js/jquery.js"></script>
+    <script type="text/javascript" src="presenter/js/showdown.js"></script>
+    <link href="presenter/css/style.css" rel="stylesheet" type="text/css">
+    <!--<link href="presenter/css/github.css" rel="stylesheet" type="text/css">-->
+  </head>
+  <body>
+
+    <div class="bg">&nbsp;</div>
+
+    <table style="width:100%;height:100%;border-collapse:collapse">
+      <tr valign=center>
+        <td>
+          <div class='centered'>
+            <em>Loading</em>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <div class='slideCount'>Slide X of Y</div>
+
+    <script src="presenter/js/rainbow.min.js"></script>
+    <script src="presenter/js/generic.js"></script>
+    <script src="presenter/js/javascript.js"></script>
+    <script src="presenter/js/presenter.js"></script>
+  </body>
+</html>

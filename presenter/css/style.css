@@ -1,0 +1,32 @@
+@import 'stylesheet.css';
+@import 'github.css';
+
+/*
+ pink   = #FF0048
+ gray   = #666364
+ orange = #FF8B00
+ purple = #99005C
+ */
+
+
+body {
+  font-family: "YanoneKaffeesatzRegular";
+  background: #EBEBEB;
+  color: #666364;
+}
+
+.bg {
+  background-image: url(bg.jpg);
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  bottom:0;
+  opacity:0.01;
+  z-index:-1;
+}
+
+pre code {
+  font-size: 20px;
+  line-height: 1.5;
+}
