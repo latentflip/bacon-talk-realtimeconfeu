@@ -1,0 +1,86 @@
+<style>
+  body {
+    overflow: hidden;
+  }
+
+  #slideshow {
+    overflow: scroll;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<script src='/jquery.min.js'></script>
+<script src='/Bacon.js'></script>
+
+<div id='slideshow'>
+  <a class='advance_on'>On</a>
+  <a class='advance_off'>Off</a>
+  <img src='http://distilleryimage7.s3.amazonaws.com/64991e968e5d11e2a2ab22000a1fb84b_7.jpg'>
+</div>
+
+<script>
+  var pics = [
+  'http://distilleryimage7.s3.amazonaws.com/64991e968e5d11e2a2ab22000a1fb84b_7.jpg',
+  'http://distilleryimage3.s3.amazonaws.com/60b7f5ae78e111e281d822000a1f9682_7.jpg',
+  'http://distilleryimage10.s3.amazonaws.com/df7324663d3311e2ba9922000a1f9c9a_7.jpg',
+  'http://distilleryimage9.s3.amazonaws.com/7058fbce81ed11e2929322000a9e0719_7.jpg']
+  
+  var advance = Bacon.interval(1000, 1)
+  advance.log()
+  
+  var advanceOn = $('.advance_on').asEventStream('click').map(true)
+  var advanceOff = $('.advance_off').asEventStream('click').map(false)
+
+  var advanceState = advanceOn.merge(advanceOff).toProperty(true)
+  
+  var autoAdvance = advanceState.combine(advance, function(state, advance) {
+    if (state)
+      return 1 
+    else
+      return 0
+  });
+
+  var clicks = $('img').asEventStream('click').map(1)
+
+  var scroll = $('img').asEventStream('mousewheel').throttle(500)
+                        .map(function() { return $(this).scrollTop() })
+                        .diff(0, function(a, b) { return b>a ? 1 : -1 })
+                        .toEventStream()
+
+  var scrollLeft = $('img').asEventStream('mousewheel').throttle(500)
+                            .map(function() { return $(this).scrollLeft() })
+                            .diff(0, function(a, b) { return b>a ? 1 : -1 })
+                            .toEventStream().log()
+
+  var keys = $(document).asEventStream('keyup')
+                            .map('.which')
+                            .filter(function(keycode) {
+                              return keycode == 39 || keycode == 37
+                            })
+                            .map(function(keycode) {
+                              if (keycode == 39) return 1
+                              if (keycode == 37) return -1
+                            })
+
+  movements = scroll.merge(clicks).merge(scrollLeft).merge(keys).merge(autoAdvance)
+                                
+  currentImage = movements.scan(0, function(sum, n) {
+    var newPosition = sum + n;
+
+    if (newPosition < 0) {
+      newPosition = pics.length-1
+    }
+
+    if (newPosition > pics.length-1) {
+      newPosition = 0
+    }
+    return newPosition;
+  })
+
+  currentImage.onValue(function(index) {
+    $('img').attr('src', pics[index]);
+  });
+  
+</script>
+

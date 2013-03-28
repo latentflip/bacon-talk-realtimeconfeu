@@ -1,0 +1,10 @@
+<script src='jquery.min.js'></script>
+<script src='Bacon.js'></script>
+
+<input class='username' /><span class='available'></span>
+
+<script>
+  var usernameStream = $('.username').asEventStream('keyup')
+                          .map(function(ev) { $(ev.currentTarget).value() })
+  usernameStream.onValue($('.available'), 'text')
+</script>

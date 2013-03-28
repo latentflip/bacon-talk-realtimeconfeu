@@ -1,0 +1,29 @@
+<script src='/jquery.min.js'></script>
+<script src='/Bacon.js'></script>
+
+<script>
+  var instagram_url = 'https://api.instagram.com/v1/media/popular?client_id=d59178fae7c94a4290a41435fbc3d279'
+
+  $.ajax({
+    url: instagram_url,
+    dataType: 'jsonp',
+    success: function(data) {
+      var images = data.data;
+      console.log(images);
+      images = images.map(function(i) {
+        return i.images.thumbnail.url;
+      });
+
+      images.forEach(function(image) {
+        $('#images').append( $('<img>').attr('src', image) );
+      });
+    }
+  })
+
+  
+   
+</script>
+
+<div id='images'></div>
+
+<div id='mo_images'></div>

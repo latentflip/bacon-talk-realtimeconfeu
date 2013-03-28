@@ -1,0 +1,67 @@
+<script src='/jquery.min.js'></script>
+<script src='/Bacon.js'></script>
+
+<script>
+  var a = 0;
+  var b = 0;
+
+  function updateC() {
+    $('#jquery .c').val(a + b);
+  };
+
+  $(function() {
+    $('#jquery .a').keyup(function() {
+      a = $(this).val();
+      a = parseInt(a);
+      updateC();
+    });
+
+    $('#jquery .b').keyup(function() {
+      b = $(this).val();
+      b = parseInt(b);
+      updateC();
+    });
+
+    updateC();
+  });
+</script>
+
+
+<script src="https://socketio.mtgox.com/socket.io/socket.io.js"></script>
+<script>
+  function valueFromInputEvent(event) {
+    return parseInt($(event.currentTarget).val()) || 0;
+  }
+  function add2(a,b) {
+    return a + b;
+  }
+
+  $(function() {
+    var a = $('#bacon .a').asEventStream('keyup')
+                            .map(valueFromInputEvent)
+                            .toProperty(0);
+
+    var b = $('#bacon .b').asEventStream('keyup')
+                            .map(valueFromInputEvent)
+                            .toProperty(0);
+
+    var c = a.combine(b, add2);
+
+    c.onValue($('#bacon .c'), 'val')
+
+  });
+</script>
+
+<div id='jquery'>
+  Jquery:
+  <input class='a'>
+  <input class='b'>
+  <input class='c'>
+</div>
+
+<div id='bacon'>
+  Bacon:
+  <input class='a'>
+  <input class='b'>
+  <input class='c'>
+</div>

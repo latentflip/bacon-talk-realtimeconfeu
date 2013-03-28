@@ -1,0 +1,25 @@
+<script src='jquery.min.js'></script>
+
+<input class='username' /><span class='available'></span>
+
+
+<script>
+
+$.post = function(url, stuff, callback) {
+  setTimeout(function() {
+    callback({ available: Math.random()>0.5, name: stuff.name });
+  }, Math.random()*5000);
+};
+
+$('.username').keyup(function() {
+  name = $('.username').val()
+
+  $.post('/check_username', { name: name }, function(data) {
+    if (data.available) {
+      $('.available').text("Available " + data.name)
+    } else {
+      $('.available').text("Not available " + data.name)
+    }
+  })
+});
+</script>

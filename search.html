@@ -1,0 +1,87 @@
+<script src='jquery.min.js'></script>
+<script src='Bacon.js'></script>
+
+<input id='search' type='search'><span class='searching' style='display:none'>searching...</span>
+<div id='lastSearchAt'></div>
+<ul id='results'>
+</ul>
+
+<script>
+  function search(query, done) {
+    var url ='http://en.wikipedia.org/w/api.php?action=query&list=search&srsearch='+query+'&format=json&callback=?'
+    $('.searching').show()
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      success: done
+    })
+  }
+
+  function renderUI(data) {
+    var results = $('#results')
+    results.empty()
+    data.query.search.forEach(function(result) {
+      results.append($('<li>').html(result.snippet));
+    });
+    $('#lastSearchAt').text('Last search: ' + new Date().toTimeString());
+    $('.searching').hide()
+  }
+
+  function first() {
+    $('#search').keyup(function(ev) {
+      var query = $(this).val()
+      search(query, renderUI)
+    });
+  }
+
+  function second() {
+    $('#search').keyup(function(ev) {
+      var query = $(this).val()
+      if (query.length > 3) {
+        search(query, renderUI)
+      }
+    });
+  }
+
+  function third() {
+    var lastQuery;
+    $('#search').keyup(function() {
+      var query = $(this).val()
+      if (query.length > 3) {
+        if (query != lastQuery) {
+          search(query, renderUI)
+          lastQuery = query;
+        }
+      }
+    });
+  }
+
+  function fourth() {
+    var lastQuery;
+    var lastRequest;
+    $('#search').keyup(function() {
+      var query = $(this).val()
+      if (query.length > 3) {
+        if (query != lastQuery) {
+          clearTimeout(lastRequest);
+          lastRequest = setTimeout(function() {
+            search(query, renderUI)
+            lastQuery = query;
+          }, 500);
+        }
+      }
+    });
+  }
+
+  function bacon() {
+    var searchEvents = $('#search').asEventStream('keyup')
+                                    .map(function() { return $('#search').val() })
+                                    .skipDuplicates()
+                                    .debounce(500)
+                                    .onValue(function(query) {
+                                      search(query, renderUI);
+                                    });
+  }
+
+  $(bacon);
+</script>
