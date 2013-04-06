@@ -16,7 +16,7 @@ body {
 }
 
 .bg {
-  background-image: url(bg.jpg);
+  background-image: url(../bg.jpg);
   position:absolute;
   left:0;
   right:0;

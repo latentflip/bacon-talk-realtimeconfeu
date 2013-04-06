@@ -3,183 +3,268 @@
 
 !
 
-# Imperative JS
-    var list     = [1,2,3,4]
-      , new_list = []
-      , new_el
+# Asynchronous JavaScript
 
-    for (var i=0; i<list.length; i++) {
-      new_el = list[i]**2
-      new_list.push( new_el )
-    }
-
-!
-
-# Imperative JS
-    var list     = [1,2,3,4]
-      , new_list = []
-      , new_el
-
-    for (var i=0; i<list.length; i++) { //<-- how
-      new_el = list[i]**2               //<-- what
-      new_list.push( new_el )           //<-- how
-    }
-
-!
-
-# Functional JS
-    var list = [1,2,3,4]
-    
-    var new_list = list.map(function(el) {
-      return el**2
-    })
-
-!
-
-# Functional JS
-
-    var list = [1,2,3,4]
-
-    function squareNum(n) {
-      return n**2;
-    };
-
-    new_list = list.map( squareNum )
-
-!
-
-# Functional JS
-
-    list.map( squareNum );     //<-- what
-
-!
-
-# Functional JS
-
-    list.map( squareNum );     //<-- what
-    list.filter( isOdd );      //<-- what
-
-!
-
-# Functional JS
-
-    list.map( squareNum );     //<-- what
-    list.filter( isOdd );      //<-- what
-    list.filter( not(isOdd) ); //<-- what
-
-!
-
-# Where did the _how_ go?
-
-## Who cares!
-
-!
-
-# Imperative -> Declarative 
-##  (how -> what)
+* JavaScript is asynchronous
+* This is a good thing, as it helps us build great UIs
+* But it can be hard to understand and write
 
 !
 
 # Callbacks
-## Run me, maybe?
 
-    $('button').click(function() {
-      # if and when the user clicks the button
-      # no matter what you are doing otherwise
-      # run this function
+* Say we want to build a live search form
+
+    $('input').keyup(function() {
+      var query = $(this).val();
+      search(query, function(results) {
+        ... do stuff with results
+      });
     });
 
-!
+* That's okay but what if we don't want to repeat queries
 
-# Callbacks
-* User interfaces are not linear
-* Real time applications are not linear
-* Our code does not run top to bottom any more 
+    var lastQuery = ''
 
-!
+    $('input').keyup(function() {
+      var query = $(this).val();
+      if (query != lastQuery) {
+        lastQuery = query
+        search(query, function(results) {
+          ... do stuff with results
+        });
+      }
+    });
 
-# Callbacks
-* not are not applications linear
-* time are linear Real
-* interfaces code User not does run bottom any more Our
+* What if we want to throttle queries, so we only fire them off every 500ms
 
-!
+   var lastQuery = ''
+   var timer
 
-# Why are callbacks so hellish?
-
-* State management
-* Imperative code, written in a run me, maybe? style
-
-!
-
-<div style='font-size: 20px; border: 1px gray solid; padding: 10px; margin-bottom: 40px'>
-Signup for my app:
-<input placeholder='username' value="phil"/>
-<span style='color: forestgreen'>✔ available</span>
-</div>
-
-    $('.username').keyup(function() {
-      name = $('.username').val()
-
-      $.post('/check_username', { name: name }, function(data) {
-        if (data.available) {
-          #...
-        }
-      });
-    })
+   $('input').keyup(function() {
+      var query = $(this).val();
+      if (query != lastQuery) {
+        lastQuery = query
+        clearTimeout(timer)
+        timer = setTimeout(function() {
+          $.getJSON('/search?q='+query, function(results) {
+            ... do stuff with results
+          });
+        }, 500);
+      }
+   });
 
 !
 
-# Why are callbacks so hellish?
+## Why does this suck?
 
-* Nested
-* What and how are jumbled up again
-* State management
-* Not composable
+* Conceptually all this code does is:
+  * When a user types anything, do a search for what they've typed
+  * But don't repeat searches
+  * And don't search more than every half a second
+
+* But is it obvious?
+
+   var lastQuery = ''
+   var timer
+
+   $('input').keyup(function() {
+      var query = $(this).val();
+      if (query != lastQuery) {
+        lastQuery = query
+        clearTimeout(timer)
+        timer = setTimeout(function() {
+          $.getJSON('/search?q='+query, function(results) {
+            ... do stuff with results
+          });
+        }, 500);
+      }
+   });
+
+* Is it extendable? Err not really
+
+   var lastQuery = ''
+   var timer
+
+   $('input').keyup(function() {
+      var query = $(this).val();
+      if (query.length > 3 && query != lastQuery) {
+        lastQuery = query
+        clearTimeout(timer)
+        timer = setTimeout(function() {
+          $.getJSON('/search?q='+query, function(results) {
+            ... do stuff with results
+          });
+        }, 500);
+      }
+   });
+
+* Is it easy to code?
+* Is it error free? Who knows
+* Is it easy to reuse?
+
+!
+
+# What's the problem
+
+* We have explicit state management?
+* We have control flow
+* And we have the logic of what we care about
+* All mixed up together
+* In other words we have a lot of _how_code, mixed up with a lot of _what_, but really we only care about _what_.
 
 !
 
-# FRP
-
-* Let's make asynchronicty a first class citizen
-* a = b + c
-* from assignment to equality
+# Is there a better way?
 
 !
 
-# Bacon.js
+# What if we could write this?
 
-* Let's not think about callbacks
-* Let's think about events
-* Let's think about eventstreams
-* Let's think about properties
-
-!
-
-# Bacon.js
-
-* A little toolkit for creating and working with event streams
-
-!
-
-# Managing Event Streams
-
-* map
-* filter
+  $('input').asEventStream('keyup')
+              .map(function() { return $('input').val() })
+              .skipDuplicates()
+              .throttle(500)
+              .onValue(function(v) {
+                search(query, function() {
+                  ...do stuff with results
+                })
+              })
 
 !
 
-# Combining event streams
+# What if we could extend it like this?
 
-* merge
-* combine
+  $('input').asEventStream('keyup')
+              .map(function() { return $('input').val() })
+              .filter(function(query) { return query.length > 3 })
+              .skipDuplicates()
+              .throttle(500)
+              .onValue(function(v) {
+                search(query, function() {
+                  ...do stuff with results
+                })
+              })
 
 !
 
-# Getting crazy
+# Well yay, FRP!
 
-* flatMap
-* flatMapLatest
-* combineTemplate
+* FRP gives us event streams as a first class _thing_
+* Note the same thing as node streams (but similar?)
+* Instead of treating events, like keyups, in isolation and handling them with callbacks, we get a stream of values for each keyup. We can then map, filter, throttle, merge, combine... event streams to compose the logic for our applications in a more understandable fashion (dealing with how not what) 
 
 !
+
+# EventStreams
+
+An event stream is a first class thing that represents a sequence of values in time. Each event occurs at a specific time, and has an associated value.
+
+We can create simple event streams using bacon, like:
+
+    var stream = Bacon.repeatedly(500, [1,2,3,4,5])
+
+But more often we would create them from DOM events (with jquery):
+
+    var clicks = $('button').asEventStream('click')
+
+!
+
+# Subscribing
+
+We can subscribe to values on event streams:
+
+    var stream = Bacon.repeatedly(500, [1,2,3,4,5])
+
+    stream.onValue(function(value) {
+      $('#output').text(value)
+    });
+
+<div id='output'></div>
+
+!
+
+# Composing event streams
+
+This is where it gets good!
+
+!
+
+#We can map event streams
+
+    var raw = $('input').asEventStream('keyup')
+
+    var queries = raw.map(function(event) {
+                            return $(event.currentTarget).val()
+                          })
+
+!
+
+# We can filter the values on an event stream
+
+    var raw = $('input').asEventStream('keyup')
+
+    var queries = raw.map(function(event) {
+                        return $(event.currentTarget).val()
+                     })
+                     .filter(function(query) {
+                        return query.length > 3
+                      })
+                      
+!
+
+# Thinking in bacon: Another example
+
+We wish to place francis bacon's head on our webpage and move it with this slider between the left and right of the screen. We also want it to work if we resize the page
+
+!
+
+  <input id='percent' type='range' min=0 max=100 step=1>
+  <img src='bacon.jpg' style='position: absolute; top: 300'>
+
+    var screenWidth, percent, position
+    
+    screenWidth = $(window).asEventStream('resize')
+                           .map(function() {
+                             return $(window).width()
+                           })
+                           .toProperty( $(window).width() )
+                    
+    percent = $('#percent').asEventStream('change')
+                            .map(function(e) {
+                              return $(e.currentTarget).val()
+                            })
+                            .toProperty(50)
+
+    position = screenWidth.combine(percent, function(width, percent) {
+                            return width * percent/100
+                          })
+
+    position.onValue(function(v) {
+               $('img').css({left: v})
+            })
+!
+
+  <input id='percent' type='range' min=0 max=100 step=1>
+  <img src='bacon.jpg' style='position: absolute; top: 300'>
+
+    var screenWidth, percent, position
+    var getScreenWidth = function() { return $(window).width() }
+    var getInputValue = function(ev) { return $(ev.currentTarget).val() }
+    
+    screenWidth = $(window).asEventStream('resize')
+                             .map(getScreenWidth)
+                             .toProperty(getScreenWidth())
+                    
+    percent = $('#percent').asEventStream('change')
+                             .map(getInputValue)
+                             .toProperty(50)
+
+    screenWidth.combine(percent, function(width, percent) {
+                  return width * percent/100
+               })
+               .onValue(function(v) {
+                 $('img').css({left: v})
+               })
+
+

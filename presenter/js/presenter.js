@@ -1,4 +1,8 @@
 var Present = { currentSlide: 0 };
+Present.bind = MicroEvent.prototype.bind;
+Present.unbind = MicroEvent.prototype.unbind;
+Present.trigger = MicroEvent.prototype.trigger;
+
 Present.showSlide = function(slide) {
   Present.currentSlide = slide;
   $('.centered').html(Present.slides[Present.currentSlide]);
@@ -6,7 +10,10 @@ Present.showSlide = function(slide) {
   
   $('code').attr('data-language', 'javascript');
   Rainbow.color()
+
+  Present.trigger('slide:show', { number: Present.currentSlide+1, count: Present.slides.length})
 };
+
 Present.nextSlide = function() {
   if (Present.currentSlide < Present.slides.length-1) {
     Present.showSlide(Present.currentSlide+1);

@@ -1,0 +1,30 @@
+<link href='app.css' type='text/css' rel='stylesheet'>
+<script src='jquery.min.js'></script>
+<script src='d3.min.js'></script>
+<script src='Bacon.js'></script>
+<script src='baconviz.js'></script>
+
+<button>Hit it!</button>
+
+<pre>
+  $(function() {
+    var stream = $('button').asEventStream('click')
+
+    stream.onValue(function(value) {
+      console.log(value);
+    });
+
+    drawStream('#canvas', 'Simple Event Stream', stream)
+  });
+</pre>
+
+<div id='canvas'></div>
+
+
+<script>
+  $(function() {
+    $('pre').each(function() {
+      eval($(this).text());
+    });
+  });
+</script>

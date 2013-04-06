@@ -24,6 +24,7 @@
     <script type="text/javascript" src="presenter/js/jquery.js"></script>
     <script type="text/javascript" src="presenter/js/showdown.js"></script>
     <link href="presenter/css/style.css" rel="stylesheet" type="text/css">
+    <link href="app.css" rel="stylesheet" type="text/css">
     <!--<link href="presenter/css/github.css" rel="stylesheet" type="text/css">-->
   </head>
   <body>
@@ -45,6 +46,39 @@
     <script src="presenter/js/rainbow.min.js"></script>
     <script src="presenter/js/generic.js"></script>
     <script src="presenter/js/javascript.js"></script>
+    <script src="presenter/js/microevent.js"></script>
     <script src="presenter/js/presenter.js"></script>
+    <script src="Bacon.js"></script>
+    <script src="d3.min.js"></script>
+    <script src="baconviz.js"></script>
+
+    <script>
+      Present.bind('slide:show', function() {
+        $('code').each(function(i, el) {
+          var code = $(el).text()
+          console.log(code)
+          eval.call(window, code)
+
+          $('input').keyup(function(ev) {
+            ev.stopPropagation()
+          });
+          $('span[data-stream]').each(function() {
+            drawStream(
+              $(this)[0],
+              $(this).data('title'),
+              window[$(this).data('stream')]
+            );
+          });
+
+          $('span[data-property]').each(function() {
+            var $el = $(this);
+            var title = $el.data('title');
+            window[$(this).data('property')].onValue(function(value) {
+              $el.text(title + ": "+value);
+            });
+          });
+        })
+      })
+    </script>
   </body>
 </html>
