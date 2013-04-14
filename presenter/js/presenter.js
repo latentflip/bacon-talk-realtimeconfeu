@@ -26,8 +26,12 @@ Present.prevSlide = function() {
 };
 
 Present.reload = function() {
+    var deck = window.location.search.slice(1);
+    if (deck.length == 0) {
+      deck = 'presentation'
+    }
     $.ajax({
-        url: 'presentation.md',
+        url: deck+'.md',
         success: function(data) {
             if (data.length>0) {
                 converter = new Showdown.converter();

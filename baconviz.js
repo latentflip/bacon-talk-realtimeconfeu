@@ -9,7 +9,6 @@
   time = Bacon.fromPoll(1000 / 30, function() {
     return new Bacon.Next(new Date().valueOf());
   });
-
   time.map(function(t) {
     return [t - 10000, t];
   }).assign(function(ds) {
@@ -37,6 +36,9 @@
       };
     });
     stream.assign(function(c) {
+      setTimeout(function() {
+        circles.shift()
+      },10000);
       return circles.push(c);
     });
     drawCircles = function() {

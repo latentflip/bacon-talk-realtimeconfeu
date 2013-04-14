@@ -21,10 +21,12 @@
       /* My styling here */
      /* End styling */
     </style>
+    <script type="text/javascript" src="utils.js"></script>
     <script type="text/javascript" src="presenter/js/jquery.js"></script>
     <script type="text/javascript" src="presenter/js/showdown.js"></script>
     <link href="presenter/css/style.css" rel="stylesheet" type="text/css">
     <link href="app.css" rel="stylesheet" type="text/css">
+    <link href="custom.css" rel="stylesheet" type="text/css">
     <!--<link href="presenter/css/github.css" rel="stylesheet" type="text/css">-->
   </head>
   <body>
@@ -53,29 +55,41 @@
     <script src="baconviz.js"></script>
 
     <script>
+      var unbindings = [];
+
       Present.bind('slide:show', function() {
+        unbindings.map(function(unbind) {
+          unbind()
+        });
+        unbindings = []
+
+
         $('code').each(function(i, el) {
           var code = $(el).text()
-          console.log(code)
           eval.call(window, code)
 
           $('input').keyup(function(ev) {
             ev.stopPropagation()
           });
           $('span[data-stream]').each(function() {
-            drawStream(
+            var unbind = drawStream(
               $(this)[0],
               $(this).data('title'),
               window[$(this).data('stream')]
             );
+            unbindings.push(unbind);
           });
 
-          $('span[data-property]').each(function() {
+          $('[data-property]').each(function() {
             var $el = $(this);
             var title = $el.data('title');
-            window[$(this).data('property')].onValue(function(value) {
+
+            $el.text(title + ": ")
+            var unbind = window[$(this).data('property')].onValue(function(value) {
               $el.text(title + ": "+value);
             });
+
+            unbindings.push(unbind)
           });
         })
       })

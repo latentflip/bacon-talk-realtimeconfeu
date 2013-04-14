@@ -1,0 +1,29 @@
+/*
+ pink   = #FF0048
+ gray   = #666364
+ orange = #FF8B00
+ purple = #99005C
+ */
+
+ul.implies {
+  list-style-type: none;
+}
+
+ul.implies li {
+  color: #FF0048; 
+}
+
+ul.implies li span {
+  font-style: italic;
+  color: #666364;
+  opacity: 0.8;
+}
+
+ul.implies li.close {
+  color: #666364;
+  opacity: 0.8;
+}
+
+table p img {
+  max-width: 100%;
+  }

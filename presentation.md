@@ -11,6 +11,79 @@
 
 !
 
+    var numbers = $(document).asEventStream('keyup')
+                               .map(getCharFromEvent)
+
+<span data-stream='numbers' data-title='Numbers' class='stream'></span>
+
+!
+
+    var keys = $(document).asEventStream('keyup')
+                             .map(getCharFromEvent)
+    
+    doublekeys = keys.map(function(key) { 
+                       return key + key;
+                     })
+
+<span data-stream='keys' data-title='Keys' class='stream'></span>
+<span data-stream='doublekeys' data-title='Doubled' class='stream'></span>
+    
+!
+
+    numbers = $(document).asEventStream('keyup')
+                               .map(getCharFromEvent)
+                               .map(parseInt)
+                               .filter(isANumber)
+
+    smoothed = numbers.slidingWindow(5)
+                          .map(function(ns) {
+                            var average = ns.reduce(function(sum,n) {
+                              return sum + n/ns.length
+                            }, 0)
+                            return round(3, average)
+                          })
+
+<span data-stream='numbers' data-title='Numbers' class='stream'></span>
+<span data-stream='smoothed' data-title='Smoothed' class='stream'></span>
+
+!
+
+    numbers1 = $(document).asEventStream('keyup')
+                          .map(getCharFromEvent)
+                          .map(parseInt)
+                          .filter(isANumber)
+
+    doAjaxCall = function(n) { 
+      return Bacon.later(n*1000, n*2)
+    }
+    flatMapped = numbers1.flatMap(doAjaxCall)
+
+    numbers1.log()
+    flatMapped.log()
+
+<span data-stream='numbers1' data-title='Numbers' class='stream'></span>
+<span data-stream='flatMapped' data-title='FlatMapped' class='stream'></span>
+
+!
+
+    numbers1 = $(document).asEventStream('keyup')
+                            .map(getCharFromEvent)
+                            .map(parseInt)
+                            .filter(isANumber)
+
+    doAjaxCall = function(n) { 
+      return Bacon.later(n*1000, n*2)
+    }
+    flatMapped = numbers1.flatMapLatest(doAjaxCall)
+
+<span data-stream='numbers1' data-title='Numbers' class='stream'></span>
+<span data-stream='flatMapped' data-title='FlatMapped' class='stream'></span>
+
+
+!
+
+
+
 # Callbacks
 
 * Say we want to build a live search form
