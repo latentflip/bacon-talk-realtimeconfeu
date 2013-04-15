@@ -12,16 +12,46 @@
         font-size:40px;
         width:20em; /* So we get about 10 words per line */
       }
+
+      div.centered input {
+        font-size: 30px;
+      }
       .slideCount {
         position: absolute;
         bottom: 1em;
         right: 1em;
       }
 
+      
+      console { 
+        position: relative;
+      }
+      console pre {
+        line-height: 1.2em;
+        overflow-y: scroll;
+        height: 6em;
+        margin-top: 4em;
+        font-size: 16px;
+        position: relative;
+     }
+      
+      console:before {
+        font-family: Yanone Kaffeesatz;
+        font-size: 30px;
+        content: 'console';
+        position: absolute;
+        top: -1.25em;
+        left: 0.1em;
+        opacity: 0.75;
+      }
+
+
       /* My styling here */
      /* End styling */
     </style>
+    <script type="text/javascript" src="underscore-min.js"></script>
     <script type="text/javascript" src="utils.js"></script>
+    <script type="text/javascript" src="console.log.js"></script>
     <script type="text/javascript" src="presenter/js/jquery.js"></script>
     <script type="text/javascript" src="presenter/js/showdown.js"></script>
     <link href="presenter/css/style.css" rel="stylesheet" type="text/css">
@@ -62,30 +92,50 @@
           unbind()
         });
         unbindings = []
+        var $ = function(sel) {
+          return jQuery('table').find(sel);
+        };
 
+        var $console = $('console');
+        if ($console.find('pre').length == 0) {
+          $console = jQuery('<pre>')
+          $('console').append($console);
+        }
 
-        $('code').each(function(i, el) {
-          var code = $(el).text()
+        window.console.log = function(obj) {
+          var $console = $('console pre');
+          var currentText = $console.text()
+          if(currentText.length) {
+            currentText += "\n";
+          } else {
+            currentText = '';
+          }
+          $console.text( currentText + clog(obj))
+          $console.scrollTop($console[0].scrollHeight)
+        }
+
+        jQuery('code').each(function(i, el) {
+          var code = jQuery(el).text()
           eval.call(window, code)
 
-          $('input').keyup(function(ev) {
+          jQuery('input').keyup(function(ev) {
             ev.stopPropagation()
           });
-          $('span[data-stream]').each(function() {
+          jQuery('span[data-stream]').each(function() {
             var unbind = drawStream(
-              $(this)[0],
-              $(this).data('title'),
-              window[$(this).data('stream')]
+              jQuery(this)[0],
+              jQuery(this).data('title'),
+              window[jQuery(this).data('stream')]
             );
             unbindings.push(unbind);
           });
 
-          $('[data-property]').each(function() {
-            var $el = $(this);
+          jQuery('[data-property]').each(function() {
+            var $el = jQuery(this);
             var title = $el.data('title');
 
             $el.text(title + ": ")
-            var unbind = window[$(this).data('property')].onValue(function(value) {
+            var unbind = window[jQuery(this).data('property')].onValue(function(value) {
               $el.text(title + ": "+value);
             });
 
