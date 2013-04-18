@@ -51,7 +51,7 @@
     </style>
     <script type="text/javascript" src="underscore-min.js"></script>
     <script type="text/javascript" src="utils.js"></script>
-    <script type="text/javascript" src="console.log.js"></script>
+    <!--<script type="text/javascript" src="console.log.js"></script>-->
     <script type="text/javascript" src="presenter/js/jquery.js"></script>
     <script type="text/javascript" src="presenter/js/showdown.js"></script>
     <link href="presenter/css/style.css" rel="stylesheet" type="text/css">
@@ -96,23 +96,23 @@
           return jQuery('table').find(sel);
         };
 
-        var $console = $('console');
-        if ($console.find('pre').length == 0) {
-          $console = jQuery('<pre>')
-          $('console').append($console);
-        }
+        //var $console = $('console');
+        //if ($console.find('pre').length == 0) {
+        //  $console = jQuery('<pre>')
+        //  $('console').append($console);
+        //}
 
-        window.console.log = function(obj) {
-          var $console = $('console pre');
-          var currentText = $console.text()
-          if(currentText.length) {
-            currentText += "\n";
-          } else {
-            currentText = '';
-          }
-          $console.text( currentText + clog(obj))
-          $console.scrollTop($console[0].scrollHeight)
-        }
+        //window.console.log = function(obj) {
+        //  var $console = $('console pre');
+        //  var currentText = $console.text()
+        //  if(currentText.length) {
+        //    currentText += "\n";
+        //  } else {
+        //    currentText = '';
+        //  }
+        //  $console.text( currentText + clog(obj))
+        //  $console.scrollTop($console[0].scrollHeight)
+        //}
 
         jQuery('code').each(function(i, el) {
           var code = jQuery(el).text()

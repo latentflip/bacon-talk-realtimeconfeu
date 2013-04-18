@@ -1,343 +1,338 @@
-# FRP and Bacon.js
+# Functional Reactive Programming and Bacon.js
 @philip_roberts
 
 !
 
-# Asynchronous JavaScript
-
-* JavaScript is asynchronous
-* This is a good thing, as it helps us build great UIs
-* But it can be hard to understand and write
+# Making life a lot easier by making it a little more complicated to start with, with Bacon.js
+@philip_roberts
 
 !
 
-    var numbers = $(document).asEventStream('keyup')
-                               .map(getCharFromEvent)
-
-<span data-stream='numbers' data-title='Numbers' class='stream'></span>
+<ul class='implies'>
+  <li>Realtime Code
+</ul>
 
 !
 
-    var keys = $(document).asEventStream('keyup')
-                             .map(getCharFromEvent)
+<ul class='implies'>
+  <li>Realtime Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;Asynchronous Code
+</ul>
+
+!
+
+<ul class='implies'>
+  <li>Realtime Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;Asynchronous Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callbacks
+</ul>
+
+!
+
+<ul class='implies'>
+  <li>Realtime Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;Asynchronous Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callbacks <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callback Hell
+</ul>
+
+!
+
+<ul class='implies'>
+  <li>Realtime Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;Asynchronous Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callbacks <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callback Hell <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:'(
+</ul>
+
+!
+
+<ul class='implies'>
+  <li>Realtime Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;Asynchronous Code <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callbacks <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callback Hell <span>implies ⇒</span>
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:'(
+  <li class=close>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;})
+  <li class=close>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;})
+  <li class=close>&nbsp;&nbsp;&nbsp;&nbsp;})
+  <li class=close>})
+</ul>
+
+!
+
+# Control Flow Inversion
+
+It's all gone inside out.
+
+!
+
+# Adding Numbers
+
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button> &nbsp; score: <span id='score'>0</span> &nbsp; <button id='plusOne'>+1</button> </div>
+
+
+    var total = 0
     
-    doublekeys = keys.map(function(key) { 
-                       return key + key;
-                     })
+    $('#plusOne').click(function() {
+      total = total + 1
+      $('#score').text(total)
+    })
 
-<span data-stream='keys' data-title='Keys' class='stream'></span>
-<span data-stream='doublekeys' data-title='Doubled' class='stream'></span>
+    $('#minusOne').click(function() {
+      total = total - 1
+      $('#score').text(total)
+    })
+
+
+!
+
+# A different way?
+
+    var events = [-1, +1, -1, +1, +1, +1 ]; //...
+
+!
+
+# A different way?
+
+    var events = [-1, +1, -1, +1, +1, +1 ]; //...
+
+    var total = events.reduce(function(sum, n) {
+                         return sum + n;
+                       }) //=> +2
+
+!
+
+# A different way?
+
+    var events = [-1, +1, -1, +1, +1, +1 ]; //...
+
+    var total = events.reduce(function(sum, n) {
+                         return sum + n;
+                       }) //=> +2
     
-!
-
-    numbers = $(document).asEventStream('keyup')
-                               .map(getCharFromEvent)
-                               .map(parseInt)
-                               .filter(isANumber)
-
-    smoothed = numbers.slidingWindow(5)
-                          .map(function(ns) {
-                            var average = ns.reduce(function(sum,n) {
-                              return sum + n/ns.length
-                            }, 0)
-                            return round(3, average)
-                          })
-
-<span data-stream='numbers' data-title='Numbers' class='stream'></span>
-<span data-stream='smoothed' data-title='Smoothed' class='stream'></span>
+    $('#score').text(total); 
+      //=> <span id='score'>2</span>
 
 !
 
-    numbers1 = $(document).asEventStream('keyup')
-                          .map(getCharFromEvent)
-                          .map(parseInt)
-                          .filter(isANumber)
+# A different way?
 
-    doAjaxCall = function(n) { 
-      return Bacon.later(n*1000, n*2)
-    }
-    flatMapped = numbers1.flatMap(doAjaxCall)
+    var events = [-1, +1, -1, +1, +1, +1, -1 ]; //...
 
-    numbers1.log()
-    flatMapped.log()
-
-<span data-stream='numbers1' data-title='Numbers' class='stream'></span>
-<span data-stream='flatMapped' data-title='FlatMapped' class='stream'></span>
+    var total = events.reduce(function(sum, n) {
+                         return sum + n;
+                       }) //=> +1
+    
+    $('#score').text(total); 
+      //=> <span id='score'>1</span>
 
 !
 
-    numbers1 = $(document).asEventStream('keyup')
-                            .map(getCharFromEvent)
-                            .map(parseInt)
-                            .filter(isANumber)
+# A different way?
 
-    doAjaxCall = function(n) { 
-      return Bacon.later(n*1000, n*2)
-    }
-    flatMapped = numbers1.flatMapLatest(doAjaxCall)
+    var events = [-1, +1, -1, +1, +1, +1, -1, +1]; //...
 
-<span data-stream='numbers1' data-title='Numbers' class='stream'></span>
-<span data-stream='flatMapped' data-title='FlatMapped' class='stream'></span>
-
+    var total = events.reduce(function(sum, n) {
+                         return sum + n;
+                       }) //=> +2
+    
+    $('#score').text(total); 
+      //=> <span id='score'>2</span>
 
 !
 
+# A different way?
 
+    var events = [-1, +1, -1, +1, +1, +1, -1, +1, +1]; //...
 
-# Callbacks
-
-* Say we want to build a live search form
-
-    $('input').keyup(function() {
-      var query = $(this).val();
-      search(query, function(results) {
-        ... do stuff with results
-      });
-    });
-
-* That's okay but what if we don't want to repeat queries
-
-    var lastQuery = ''
-
-    $('input').keyup(function() {
-      var query = $(this).val();
-      if (query != lastQuery) {
-        lastQuery = query
-        search(query, function(results) {
-          ... do stuff with results
-        });
-      }
-    });
-
-* What if we want to throttle queries, so we only fire them off every 500ms
-
-   var lastQuery = ''
-   var timer
-
-   $('input').keyup(function() {
-      var query = $(this).val();
-      if (query != lastQuery) {
-        lastQuery = query
-        clearTimeout(timer)
-        timer = setTimeout(function() {
-          $.getJSON('/search?q='+query, function(results) {
-            ... do stuff with results
-          });
-        }, 500);
-      }
-   });
+    var total = events.reduce(function(sum, n) {
+                         return sum + n;
+                       }) //=> +3
+    
+    $('#score').text(total); 
+      //=> <span id='score'>3</span>
 
 !
 
-## Why does this suck?
+# It's like, what if:
 
-* Conceptually all this code does is:
-  * When a user types anything, do a search for what they've typed
-  * But don't repeat searches
-  * And don't search more than every half a second
-
-* But is it obvious?
-
-   var lastQuery = ''
-   var timer
-
-   $('input').keyup(function() {
-      var query = $(this).val();
-      if (query != lastQuery) {
-        lastQuery = query
-        clearTimeout(timer)
-        timer = setTimeout(function() {
-          $.getJSON('/search?q='+query, function(results) {
-            ... do stuff with results
-          });
-        }, 500);
-      }
-   });
-
-* Is it extendable? Err not really
-
-   var lastQuery = ''
-   var timer
-
-   $('input').keyup(function() {
-      var query = $(this).val();
-      if (query.length > 3 && query != lastQuery) {
-        lastQuery = query
-        clearTimeout(timer)
-        timer = setTimeout(function() {
-          $.getJSON('/search?q='+query, function(results) {
-            ... do stuff with results
-          });
-        }, 500);
-      }
-   });
-
-* Is it easy to code?
-* Is it error free? Who knows
-* Is it easy to reuse?
+    a = b + c
 
 !
 
-# What's the problem
+# It's like, what if:
 
-* We have explicit state management?
-* We have control flow
-* And we have the logic of what we care about
-* All mixed up together
-* In other words we have a lot of _how_code, mixed up with a lot of _what_, but really we only care about _what_.
+    a = b + c
+
+meant a _always equals_ b plus c
 
 !
 
-# Is there a better way?
+# It's like, what if:
 
-!
+    a = b + c
 
-# What if we could write this?
+meant a _always equals_ b plus c
 
-  $('input').asEventStream('keyup')
-              .map(function() { return $('input').val() })
-              .skipDuplicates()
-              .throttle(500)
-              .onValue(function(v) {
-                search(query, function() {
-                  ...do stuff with results
-                })
-              })
-
-!
-
-# What if we could extend it like this?
-
-  $('input').asEventStream('keyup')
-              .map(function() { return $('input').val() })
-              .filter(function(query) { return query.length > 3 })
-              .skipDuplicates()
-              .throttle(500)
-              .onValue(function(v) {
-                search(query, function() {
-                  ...do stuff with results
-                })
-              })
-
-!
-
-# Well yay, FRP!
-
-* FRP gives us event streams as a first class _thing_
-* Note the same thing as node streams (but similar?)
-* Instead of treating events, like keyups, in isolation and handling them with callbacks, we get a stream of values for each keyup. We can then map, filter, throttle, merge, combine... event streams to compose the logic for our applications in a more understandable fashion (dealing with how not what) 
+instead of assign b + c to a at this moment in time.
 
 !
 
 # EventStreams
 
-An event stream is a first class thing that represents a sequence of values in time. Each event occurs at a specific time, and has an associated value.
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button></div>
 
-We can create simple event streams using bacon, like:
+    var minusOnes = $('#minusOne').asEventStream('click')
 
-    var stream = Bacon.repeatedly(500, [1,2,3,4,5])
-
-But more often we would create them from DOM events (with jquery):
-
-    var clicks = $('button').asEventStream('click')
+    minusOnes.onValue(function(value) {
+      console.log(value)
+    })
 
 !
 
-# Subscribing
+# EventStreams
 
-We can subscribe to values on event streams:
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button></div>
 
-    var stream = Bacon.repeatedly(500, [1,2,3,4,5])
+    minusOnes = $('#minusOne').asEventStream('click')
 
-    stream.onValue(function(value) {
-      $('#output').text(value)
+<span data-stream='minusOnes' data-title='minusOnes' class='stream'></span>
+
+!
+
+# EventStreams
+
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button></div>
+
+    minusOnes = $('#minusOne').asEventStream('click')
+                               .map(function(value) {
+                                 return -1
+                               })
+
+<span data-stream='minusOnes' data-title='Minus Ones' class='stream'></span>
+
+!
+
+# EventStreams
+
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button> &nbsp; score: <span id='score'>0</span> &nbsp; <button id='plusOne'>+1</button> </div>
+
+    minusOnes = $('#minusOne').asEventStream('click').map(-1)
+    plusOnes = $('#plusOne').asEventStream('click').map(+1)
+
+<span data-stream='minusOnes' data-title='Minus Ones' class='stream'></span>
+<span data-stream='plusOnes' data-title='Plus Ones' class='stream'></span>
+
+!
+
+# EventStreams
+
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button> &nbsp; score: <span id='score'>0</span> &nbsp; <button id='plusOne'>+1</button> </div>
+
+    var minusOnes = $('#minusOne').asEventStream('click').map(-1)
+    var plusOnes = $('#plusOne').asEventStream('click').map(1)
+    
+    var scores = minusOnes.merge(plusOnes)
+
+<span data-stream='scores' data-title='Scores' class='stream'></span>
+
+!
+
+# EventStreams
+
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button> &nbsp; score: <span id='score'>0</span> &nbsp; <button id='plusOne'>+1</button> </div>
+
+    var minusOnes = $('#minusOne').asEventStream('click').map(-1)
+    var plusOnes = $('#plusOne').asEventStream('click').map(1)
+    
+    var scores = minusOnes.merge(plusOnes)
+                          .scan(0, function(sum, value) {
+                            return sum + value
+                          }).changes()
+
+<span data-stream='scores' data-title='Scores' class='stream'></span>
+
+!
+
+# EventStreams
+
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button> &nbsp; score: <span id='score'>0</span> &nbsp; <button id='plusOne'>+1</button> </div>
+
+    var minusOnes = $('#minusOne').asEventStream('click').map(-1)
+    var plusOnes = $('#plusOne').asEventStream('click').map(1)
+    
+    var score = minusOnes.merge(plusOnes)
+                          .scan(0, function(sum, value) {
+                            return sum + value
+                          }).changes()
+
+    score.assign($('#score'), 'text');
+
+!
+
+# Properties
+
+!
+
+# Yuck! Math
+
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+
+    var a=0, b=0;
+  
+    $('#a').keyup(function(ev) {
+      a = parseInt( $(ev.currentTarget).val() )
+      $('#answer').val(a + b)
+    });
+  
+    $('#b').keyup(function(ev) {
+      b = parseInt( $(ev.currentTarget).val() )
+      $('#answer').val(a + b)
     });
 
-<div id='output'></div>
-
 !
 
-# Composing event streams
+# Yay! Math!
 
-This is where it gets good!
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
 
-!
+    function inputVal(ev) {
+      return $(ev.currentTarget).val()
+    }
+    function isNumber(n) {
+      return n > 0
+    }
 
-#We can map event streams
+    var a = $('#a').asEventStream('keyup')
+                      .map(inputVal)
+                      .map(parseInt)
+                      .filter(isNumber)
+                      .toProperty(0)
 
-    var raw = $('input').asEventStream('keyup')
+    var b = $('#b').asEventStream('keyup')
+                      .map(inputVal)
+                      .map(parseInt)
+                      .filter(isNumber)
+                      .toProperty(0)
 
-    var queries = raw.map(function(event) {
-                            return $(event.currentTarget).val()
-                          })
+    function sum(arg1, arg2) { return arg1 + arg2 }
+    var c = a.combine(b, sum)
+    c.assign($('#answer'), 'val')
 
-!
+<span data-stream='a' data-title='Scores' class='stream'></span>
 
-# We can filter the values on an event stream
 
-    var raw = $('input').asEventStream('keyup')
-
-    var queries = raw.map(function(event) {
-                        return $(event.currentTarget).val()
-                     })
-                     .filter(function(query) {
-                        return query.length > 3
-                      })
-                      
-!
-
-# Thinking in bacon: Another example
-
-We wish to place francis bacon's head on our webpage and move it with this slider between the left and right of the screen. We also want it to work if we resize the page
-
-!
-
-  <input id='percent' type='range' min=0 max=100 step=1>
-  <img src='bacon.jpg' style='position: absolute; top: 300'>
-
-    var screenWidth, percent, position
     
-    screenWidth = $(window).asEventStream('resize')
-                           .map(function() {
-                             return $(window).width()
-                           })
-                           .toProperty( $(window).width() )
-                    
-    percent = $('#percent').asEventStream('change')
-                            .map(function(e) {
-                              return $(e.currentTarget).val()
-                            })
-                            .toProperty(50)
-
-    position = screenWidth.combine(percent, function(width, percent) {
-                            return width * percent/100
-                          })
-
-    position.onValue(function(v) {
-               $('img').css({left: v})
-            })
-!
-
-  <input id='percent' type='range' min=0 max=100 step=1>
-  <img src='bacon.jpg' style='position: absolute; top: 300'>
-
-    var screenWidth, percent, position
-    var getScreenWidth = function() { return $(window).width() }
-    var getInputValue = function(ev) { return $(ev.currentTarget).val() }
-    
-    screenWidth = $(window).asEventStream('resize')
-                             .map(getScreenWidth)
-                             .toProperty(getScreenWidth())
-                    
-    percent = $('#percent').asEventStream('change')
-                             .map(getInputValue)
-                             .toProperty(50)
-
-    screenWidth.combine(percent, function(width, percent) {
-                  return width * percent/100
-               })
-               .onValue(function(v) {
-                 $('img').css({left: v})
-               })
-
 
