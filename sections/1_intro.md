@@ -1,3 +1,7 @@
+# Functional Reactive Programming & Bacon.js
+
+## Philip Roberts
+
 !
 
 <ul class='implies'>

@@ -14,7 +14,7 @@
     var numbers = $(document).asEventStream('keyup')
                                .map(getCharFromEvent)
 
-<span data-stream='numbers' data-title='Numbers' class='stream'></span>
+span data-stream='numbers' data-title='Numbers' class='stream'></span>
 
 !
 

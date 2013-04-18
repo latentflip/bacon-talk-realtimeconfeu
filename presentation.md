@@ -284,7 +284,7 @@ instead of assign b + c to a at this moment in time.
 
 !
 
-# Yuck! Math
+# Yuck! Math D:
 
 <style> input { width: 100px; } </style>
 <input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
@@ -301,9 +301,37 @@ instead of assign b + c to a at this moment in time.
       $('#answer').val(a + b)
     });
 
+
+
+
 !
 
-# Yay! Math!
+# Yay! Math! :D
+
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+
+    var a = $('#a').asEventStream('keyup')
+
+<span data-stream='a' data-title='A' class='stream'></span>
+
+!
+
+# Yay! Math! :D
+
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+
+    function inputVal(ev) {
+      return $(ev.currentTarget).val()
+    }
+
+    var a = $('#a').asEventStream('keyup')
+                      .map(inputVal)
+
+<span data-stream='a' data-title='A' class='stream'></span>
+
+!
 
 <style> input { width: 100px; } </style>
 <input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
@@ -319,20 +347,131 @@ instead of assign b + c to a at this moment in time.
                       .map(inputVal)
                       .map(parseInt)
                       .filter(isNumber)
-                      .toProperty(0)
 
-    var b = $('#b').asEventStream('keyup')
+<span data-stream='a' data-title='A' class='stream'></span>
+
+!
+
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+
+    function inputVal(ev) { return $(ev.currentTarget).val() }
+    function isNumber(n) { return n > 0 }
+
+    var a = $('#a').asEventStream('keyup')
                       .map(inputVal)
                       .map(parseInt)
                       .filter(isNumber)
+
+<span data-stream='a' data-title='A' class='stream'></span>
+
+!
+
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+
+    function inputVal(ev) { return $(ev.currentTarget).val() }
+    function isNumber(n) { return n > 0 }
+
+    var a = $('#a').asEventStream('keyup')
+                      .map(inputVal).map(parseInt).filter(isNumber)
+
+    var b = $('#b').asEventStream('keyup')
+                      .map(inputVal).map(parseInt).filter(isNumber)
+    
+    var answer = a.merge(b)
+
+<span data-stream='answer' data-title='Answer' class='stream'></span>
+
+!
+
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+
+    function inputVal(ev) { return $(ev.currentTarget).val() }
+    function isNumber(n) { return n > 0 }
+
+    var a = $('#a').asEventStream('keyup')
+                      .map(inputVal).map(parseInt).filter(isNumber)
                       .toProperty(0)
 
-    function sum(arg1, arg2) { return arg1 + arg2 }
-    var c = a.combine(b, sum)
-    c.assign($('#answer'), 'val')
-
-<span data-stream='a' data-title='Scores' class='stream'></span>
-
-
+    var b = $('#b').asEventStream('keyup')
+                      .map(inputVal).map(parseInt).filter(isNumber)
+                      .toProperty(0)
     
+    function sum(arg1, arg2) { return arg1 + arg2 }
+    var answer = a.combine(b, sum)
 
+<span data-stream='answer' data-title='Answer' class='stream'></span>
+
+!
+
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+
+    function inputVal(ev) { return $(ev.currentTarget).val() }
+    function isNumber(n) { return n > 0 }
+
+    var a = $('#a').asEventStream('keyup')
+                      .map(inputVal).map(parseInt).filter(isNumber)
+                      .toProperty(0)
+
+    var b = $('#b').asEventStream('keyup')
+                      .map(inputVal).map(parseInt).filter(isNumber)
+                      .toProperty(0)
+    
+    function sum(arg1, arg2) { return arg1 + arg2 }
+    var answer = a.combine(b, sum)
+
+    answer.assign( $('#answer'), 'val')
+
+
+!
+
+# Getting Funky
+
+## Ajax
+
+!
+
+Username: <input id='username'>
+
+    var username =
+      $('#username').asEventStream('keyup')
+                    .map(function(ev) { return $(ev.currentTarget).val() })
+                    .filter(function(username) { 
+                      return username.length >= 3
+                    })
+                    .skipDuplicates()
+                    .debounce(250)
+                     
+<span data-stream='username' data-title='Username' class='stream'></span>
+
+!
+
+Username: <input id='username'>
+
+    var username =
+      $('#username').asEventStream('keyup')
+                    .map(function(ev) { return $(ev.currentTarget).val() })
+                    .filter(function(username) { 
+                      return username.length >= 3
+                    })
+                    .skipDuplicates()
+                    .debounce(250)
+
+    function ajaxCall(query) {
+      return Bacon.fromCallback(function(callback) {
+        var url ='http://en.wikipedia.org/w/api.php?action=query&list=search&srsearch='+query+'&format=json&callback=?'
+        $('.searching').show()
+        $.ajax({
+          url: url,
+          dataType: 'json',
+          success: callback
+        })
+      })
+    }
+    var results = username.flatMap(ajaxCall)
+    results.log()
+                     
+<span data-stream='username' data-title='Username' class='stream'></span>
