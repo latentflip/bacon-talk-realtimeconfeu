@@ -438,40 +438,88 @@ Username: <input id='username'>
 
     var username =
       $('#username').asEventStream('keyup')
-                    .map(function(ev) { return $(ev.currentTarget).val() })
-                    .filter(function(username) { 
-                      return username.length >= 3
-                    })
-                    .skipDuplicates()
-                    .debounce(250)
-                     
+                .map(function(ev) { return $(ev.currentTarget).val() })
+                .filter(function(username) { 
+                  return username.length >= 3
+                })
+                .skipDuplicates()
+                .debounce(250)
+                 
 <span data-stream='username' data-title='Username' class='stream'></span>
 
 !
 
-Username: <input id='username'>
+Username: <input id='username'> <span id=available></span>
 
-    var username =
-      $('#username').asEventStream('keyup')
-                    .map(function(ev) { return $(ev.currentTarget).val() })
-                    .filter(function(username) { 
-                      return username.length >= 3
-                    })
-                    .skipDuplicates()
-                    .debounce(250)
+    var username = 
+      $('#username')
+          .asEventStream('keyup')
+          .map(function(ev) { return $(ev.currentTarget).val() })
 
+    username.onValue(function(name) {
+      console.log(name)
+      doAjaxCall(name, function(result) {
+        $('#available').text(result)
+      });
+    })
+
+
+!
+
+Username: <input id='username'> <span id='available'></span>
+
+    var username = 
+      $('#username')
+          .asEventStream('keyup')
+          .map(function(ev) { return $(ev.currentTarget).val() })
+    
     function ajaxCall(query) {
       return Bacon.fromCallback(function(callback) {
-        var url ='http://en.wikipedia.org/w/api.php?action=query&list=search&srsearch='+query+'&format=json&callback=?'
-        $('.searching').show()
-        $.ajax({
-          url: url,
-          dataType: 'json',
-          success: callback
-        })
+        doAjaxCall(query, callback)
       })
     }
+
     var results = username.flatMap(ajaxCall)
-    results.log()
+    results.assign( $('#available'), 'text')
                      
-<span data-stream='username' data-title='Username' class='stream'></span>
+<span data-stream='results' data-title='Results' class='stream'></span>
+
+!
+
+Username: <input id='username'> <span id='available'></span>
+
+    var username = 
+      $('#username')
+          .asEventStream('keyup')
+          .map(function(ev) { return $(ev.currentTarget).val() })
+    
+    function ajaxCall(query) {
+      return Bacon.fromCallback(function(callback) {
+        doAjaxCall(query, callback)
+      })
+    }
+
+    var results = username.flatMap(ajaxCall)
+    results.assign( $('#available'), 'text')
+                     
+<span data-stream='results' data-title='Results' class='stream'></span>
+
+!
+
+Username: <input id='username'> <span id='available'></span>
+
+    var username = 
+      $('#username')
+          .asEventStream('keyup')
+          .map(function(ev) { return $(ev.currentTarget).val() })
+    
+    function ajaxCall(query) {
+      return Bacon.fromCallback(function(callback) {
+        doAjaxCall(query, callback)
+      })
+    }
+
+    var results = username.flatMapLatest(ajaxCall)
+    results.assign( $('#available'), 'text')
+                     
+<span data-stream='results' data-title='Results' class='stream'></span>

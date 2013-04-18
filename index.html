@@ -1,6 +1,14 @@
 <html>
   <head>
     <title>Markdown Presenter</title>
+    <script>
+      window.doAjaxCall = function(query, callback) {
+        setTimeout(function() {
+          var result = Math.random() > 0.5;
+          callback([query, (result ? 'x' : '✔')])
+        }, Math.random()*2000)
+      }
+    </script>
     <style>
       html, body {
         margin:0;
@@ -148,5 +156,6 @@
         })
       })
     </script>
+
   </body>
 </html>
