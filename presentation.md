@@ -1,20 +1,3 @@
-
-!
-
-<style> button { font-size: 20px; } </style>
-<div> <button id='minusOne'>-1</button> &nbsp; score: <span id='score'>0</span> &nbsp; <button id='plusOne'>+1</button> </div>
-
-    var minusOnes = $('#minusOne').asEventStream('click').map(-1)
-    var plusOnes = $('#plusOne').asEventStream('click').map(1)
-    
-    var scores = minusOnes.merge(plusOnes)
-
-<div data-stream='minusOnes' data-title='Minus Ones' class='stream'></div>
-<div data-stream='plusOnes' data-title='Plus Ones' class='stream'></div>
-<div data-stream='scores' data-title='Scores' class='stream'></div>
-
-!
-
 # Functional Reactive Programming and Bacon.js
 @philip_roberts
 
@@ -367,6 +350,7 @@ instead of assign b + c to a at this moment in time.
                       .map(inputVal)
                       .map(parseInt)
                       .filter(isNumber)
+                      .debounce(150)
 
 <div data-stream='a' data-title='A' class='stream'></div>
 
