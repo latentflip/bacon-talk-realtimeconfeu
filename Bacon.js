@@ -1,4 +1,16 @@
 (function() {
+  var colors = ['#4ECDC4', '#556270', '#FF6B6B', '#C44D58', '#BD1550', '#033649', '#FF4242']
+  var i = 0;
+  var randomColor = function() {
+    var c = colors[i];
+    i++
+    i = i % colors.length
+    return c;
+  };
+
+
+
+
   var Bacon, Bus, Dispatcher, End, Error, Event, EventStream, Initial, Next, None, Observable, Property, PropertyDispatcher, Some, addPropertyInitValueToStream, assert, assertArray, assertEvent, assertFunction, assertNoArguments, assertString, cloneArray, end, former, indexOf, initial, isFieldKey, isFunction, latter, makeFunction, makeSpawner, methodCall, next, nop, partiallyApplied, remove, sendWrapped, toCombinator, toEvent, toFieldExtractor, toFieldKey, toOption, toSimpleExtractor, _, _ref,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
@@ -998,6 +1010,7 @@
       });
     };
 
+
     Observable.prototype.log = function() {
       var args;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -1038,6 +1051,16 @@
       } else {
         return EventStream.__super__.map.apply(this, [p].concat(__slice.call(args)));
       }
+    };
+
+    EventStream.prototype.color = function() {
+      return this.map(function(v) {
+        if (v.color) { return v }
+        return {
+          v: v,
+          color: randomColor()
+        }
+      });
     };
 
     EventStream.prototype.delay = function(delay) {

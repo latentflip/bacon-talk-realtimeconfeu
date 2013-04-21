@@ -1,11 +1,23 @@
 <html>
   <head>
-    <title>Markdown Presenter</title>
+    <title>Bacon</title>
     <script>
       window.doAjaxCall = function(query, callback) {
         setTimeout(function() {
-          var result = Math.random() > 0.5;
-          callback([query, (result ? 'x' : '✔')])
+          var result = (Math.random() > 0.5) ? 'x' : '✔'
+          
+          if (query.color) {
+            query.v += result;
+          } else { 
+            var str = query + result;
+            query = { v: str }
+          }
+          query.data = query.v;
+          query.toString = function() {
+            return query.data;
+          }
+
+          callback(query)
         }, Math.random()*2000)
       }
     </script>
@@ -108,24 +120,6 @@
           return jQuery('table').find(sel);
         };
 
-        //var $console = $('console');
-        //if ($console.find('pre').length == 0) {
-        //  $console = jQuery('<pre>')
-        //  $('console').append($console);
-        //}
-
-        //window.console.log = function(obj) {
-        //  var $console = $('console pre');
-        //  var currentText = $console.text()
-        //  if(currentText.length) {
-        //    currentText += "\n";
-        //  } else {
-        //    currentText = '';
-        //  }
-        //  $console.text( currentText + clog(obj))
-        //  $console.scrollTop($console[0].scrollHeight)
-        //}
-
         jQuery('code').each(function(i, el) {
           var code = jQuery(el).text()
           eval.call(window, code)
@@ -133,7 +127,7 @@
           jQuery('input').keyup(function(ev) {
             ev.stopPropagation()
           });
-          jQuery('span[data-stream]').each(function() {
+          jQuery('[data-stream]').each(function() {
             var unbind = drawStream(
               jQuery(this)[0],
               jQuery(this).data('title'),

@@ -1,9 +1,26 @@
+
+!
+
+<style> button { font-size: 20px; } </style>
+<div> <button id='minusOne'>-1</button> &nbsp; score: <span id='score'>0</span> &nbsp; <button id='plusOne'>+1</button> </div>
+
+    var minusOnes = $('#minusOne').asEventStream('click').map(-1)
+    var plusOnes = $('#plusOne').asEventStream('click').map(1)
+    
+    var scores = minusOnes.merge(plusOnes)
+
+<div data-stream='minusOnes' data-title='Minus Ones' class='stream'></div>
+<div data-stream='plusOnes' data-title='Plus Ones' class='stream'></div>
+<div data-stream='scores' data-title='Scores' class='stream'></div>
+
+!
+
 # Functional Reactive Programming and Bacon.js
 @philip_roberts
 
 !
 
-# Making life a lot easier by making it a little more complicated to start with, with Bacon.js
+# Making life a lot easier by making it a little more complicated to first
 @philip_roberts
 
 !
@@ -201,7 +218,7 @@ instead of assign b + c to a at this moment in time.
 
     minusOnes = $('#minusOne').asEventStream('click')
 
-<span data-stream='minusOnes' data-title='minusOnes' class='stream'></span>
+<div data-stream='minusOnes' data-title='minusOnes' class='stream'></div>
 
 !
 
@@ -215,7 +232,7 @@ instead of assign b + c to a at this moment in time.
                                  return -1
                                })
 
-<span data-stream='minusOnes' data-title='Minus Ones' class='stream'></span>
+<div data-stream='minusOnes' data-title='Minus Ones' class='stream'></div>
 
 !
 
@@ -227,8 +244,8 @@ instead of assign b + c to a at this moment in time.
     minusOnes = $('#minusOne').asEventStream('click').map(-1)
     plusOnes = $('#plusOne').asEventStream('click').map(+1)
 
-<span data-stream='minusOnes' data-title='Minus Ones' class='stream'></span>
-<span data-stream='plusOnes' data-title='Plus Ones' class='stream'></span>
+<div data-stream='minusOnes' data-title='Minus Ones' class='stream'></div>
+<div data-stream='plusOnes' data-title='Plus Ones' class='stream'></div>
 
 !
 
@@ -242,7 +259,9 @@ instead of assign b + c to a at this moment in time.
     
     var scores = minusOnes.merge(plusOnes)
 
-<span data-stream='scores' data-title='Scores' class='stream'></span>
+<div data-stream='minusOnes' data-title='Minus Ones' class='stream'></div>
+<div data-stream='plusOnes' data-title='Plus Ones' class='stream'></div>
+<div data-stream='scores' data-title='Scores' class='stream'></div>
 
 !
 
@@ -252,14 +271,15 @@ instead of assign b + c to a at this moment in time.
 <div> <button id='minusOne'>-1</button> &nbsp; score: <span id='score'>0</span> &nbsp; <button id='plusOne'>+1</button> </div>
 
     var minusOnes = $('#minusOne').asEventStream('click').map(-1)
-    var plusOnes = $('#plusOne').asEventStream('click').map(1)
-    
-    var scores = minusOnes.merge(plusOnes)
-                          .scan(0, function(sum, value) {
-                            return sum + value
-                          }).changes()
+    var plusOnes  = $('#plusOne').asEventStream('click').map(1)
 
-<span data-stream='scores' data-title='Scores' class='stream'></span>
+    var merged = minusOnes.merge(plusOnes)
+    var score  = merged.scan(0, function(sum, value) {
+                         return sum + value
+                       }).changes()
+
+<div data-stream='merged' data-title='Merged' class='stream'></div>
+<div data-stream='score' data-title='Scanned' class='stream'></div>
 
 !
 
@@ -313,7 +333,7 @@ instead of assign b + c to a at this moment in time.
 
     var a = $('#a').asEventStream('keyup')
 
-<span data-stream='a' data-title='A' class='stream'></span>
+<div data-stream='a' data-title='A' class='stream'></div>
 
 !
 
@@ -329,7 +349,7 @@ instead of assign b + c to a at this moment in time.
     var a = $('#a').asEventStream('keyup')
                       .map(inputVal)
 
-<span data-stream='a' data-title='A' class='stream'></span>
+<div data-stream='a' data-title='A' class='stream'></div>
 
 !
 
@@ -348,22 +368,7 @@ instead of assign b + c to a at this moment in time.
                       .map(parseInt)
                       .filter(isNumber)
 
-<span data-stream='a' data-title='A' class='stream'></span>
-
-!
-
-<style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
-
-    function inputVal(ev) { return $(ev.currentTarget).val() }
-    function isNumber(n) { return n > 0 }
-
-    var a = $('#a').asEventStream('keyup')
-                      .map(inputVal)
-                      .map(parseInt)
-                      .filter(isNumber)
-
-<span data-stream='a' data-title='A' class='stream'></span>
+<div data-stream='a' data-title='A' class='stream'></div>
 
 !
 
@@ -381,7 +386,9 @@ instead of assign b + c to a at this moment in time.
     
     var answer = a.merge(b)
 
-<span data-stream='answer' data-title='Answer' class='stream'></span>
+<div data-stream='a' data-title='A' class='stream'></div>
+<div data-stream='b' data-title='B' class='stream'></div>
+<div data-stream='answer' data-title='Answer' class='stream'></div>
 
 !
 
@@ -402,7 +409,9 @@ instead of assign b + c to a at this moment in time.
     function sum(arg1, arg2) { return arg1 + arg2 }
     var answer = a.combine(b, sum)
 
-<span data-stream='answer' data-title='Answer' class='stream'></span>
+<div data-stream='a' data-title='A' class='stream'></div>
+<div data-stream='b' data-title='B' class='stream'></div>
+<div data-stream='answer' data-title='Answer' class='stream'></div>
 
 !
 
@@ -445,7 +454,7 @@ Username: <input id='username'>
                 .skipDuplicates()
                 .debounce(250)
                  
-<span data-stream='username' data-title='Username' class='stream'></span>
+<div data-stream='username' data-title='Username' class='stream'></div>
 
 !
 
@@ -472,6 +481,28 @@ Username: <input id='username'> <span id='available'></span>
       $('#username')
           .asEventStream('keyup')
           .map(function(ev) { return $(ev.currentTarget).val() })
+          .color()
+
+    function ajaxCall(query) {
+      return Bacon.fromCallback(function(callback) {
+        doAjaxCall(query, callback)
+      })
+    }
+
+    var results = username.flatMap(ajaxCall)
+    results.assign( $('#available'), 'text')
+                     
+<div data-stream='results' data-title='Results' class='stream'></div>
+
+!
+
+Username: <input id='username'> <span id='available'></span>
+
+    var username = 
+      $('#username')
+          .asEventStream('keyup')
+          .map(function(ev) { return $(ev.currentTarget).val() })
+          .color()
     
     function ajaxCall(query) {
       return Bacon.fromCallback(function(callback) {
@@ -482,8 +513,7 @@ Username: <input id='username'> <span id='available'></span>
     var results = username.flatMap(ajaxCall)
     results.assign( $('#available'), 'text')
                      
-<span data-stream='results' data-title='Results' class='stream'></span>
-
+<div data-stream='results' data-title='Results' class='stream'></div>
 !
 
 Username: <input id='username'> <span id='available'></span>
@@ -492,26 +522,7 @@ Username: <input id='username'> <span id='available'></span>
       $('#username')
           .asEventStream('keyup')
           .map(function(ev) { return $(ev.currentTarget).val() })
-    
-    function ajaxCall(query) {
-      return Bacon.fromCallback(function(callback) {
-        doAjaxCall(query, callback)
-      })
-    }
-
-    var results = username.flatMap(ajaxCall)
-    results.assign( $('#available'), 'text')
-                     
-<span data-stream='results' data-title='Results' class='stream'></span>
-
-!
-
-Username: <input id='username'> <span id='available'></span>
-
-    var username = 
-      $('#username')
-          .asEventStream('keyup')
-          .map(function(ev) { return $(ev.currentTarget).val() })
+          .color()
     
     function ajaxCall(query) {
       return Bacon.fromCallback(function(callback) {
@@ -522,4 +533,4 @@ Username: <input id='username'> <span id='available'></span>
     var results = username.flatMapLatest(ajaxCall)
     results.assign( $('#available'), 'text')
                      
-<span data-stream='results' data-title='Results' class='stream'></span>
+<div data-stream='results' data-title='Results' class='stream'></div>

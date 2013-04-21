@@ -30,10 +30,20 @@
     });
     circles = [];
     stream = stream.map(function(p) {
-      return {
-        v: p,
-        time: new Date().valueOf()
-      };
+      if (p.color) {
+        console.log('c', p.color)
+        return {
+          v: p.v,
+          color: p.color,
+          time: new Date().valueOf()
+        }
+      } else {
+        return {
+          v: p,
+          time: new Date().valueOf(),
+          color: 'black'
+        }
+      }
     });
     stream.assign(function(c) {
       setTimeout(function() {
@@ -48,12 +58,15 @@
       });
       sel.enter().append('circle').attr({
         cy: 40,
-        r: 20,
+        r: 6,
         cx: 20
-      }).attr('r', 3);
+      }).style('fill', function(d) {
+        return d.color;
+      });
+
       sel.attr('cx', function(d) {
         return scale(d.time);
-      });
+      })
       sel.exit().remove();
       tsel = svg.selectAll('text.p').data(circles, function(d) {
         return d.time;
