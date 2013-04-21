@@ -21,7 +21,7 @@
           }
 
           callback(query)
-        }, Math.random()*1000)
+        }, Math.random()*3000)
       }
     </script>
     <style>
@@ -46,9 +46,9 @@
       }
       
       svg {
-        font-size: large!important;
+        font-size: 25px!important;
       }
-      
+
       console { 
         position: relative;
       }
@@ -140,13 +140,15 @@
           return jQuery('table').find(sel);
         };
 
+        jQuery('input').keydown(function(ev) {
+          ev.stopPropagation()
+        })
+        jQuery('table td .centered').append('<a href="#" style="opacity: 0">foo</a>')
+
         jQuery('code').each(function(i, el) {
           var code = jQuery(el).text()
           eval.call(window, code)
 
-          jQuery('input').keyup(function(ev) {
-            ev.stopPropagation()
-          });
           jQuery('[data-stream]').each(function() {
             var unbind = drawStream(
               jQuery(this)[0],

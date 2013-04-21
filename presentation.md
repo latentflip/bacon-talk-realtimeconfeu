@@ -3,7 +3,7 @@
 
 !
 
-# Making life a lot easier by making it a little more complicated to first
+# Making life a lot easier by making it a little more complicated first
 @philip_roberts
 
 !
@@ -68,6 +68,20 @@ It's all gone inside out.
 
 !
 
+<style>
+  .bg { 
+    background-image: url(/pics/blackhole.jpg);
+    opacity: 1;
+  }
+</style>
+
+!
+
+# Let's dive in
+
+
+!
+
 # Adding Numbers
 
 <style> button { font-size: 20px; } </style>
@@ -86,6 +100,10 @@ It's all gone inside out.
       $('#score').text(total)
     })
 
+
+!
+
+# A different way?
 
 !
 
@@ -161,23 +179,8 @@ It's all gone inside out.
 
     a = b + c
 
-!
+meant a _always equals_ b plus c, at any time
 
-# It's like, what if:
-
-    a = b + c
-
-meant a _always equals_ b plus c
-
-!
-
-# It's like, what if:
-
-    a = b + c
-
-meant a _always equals_ b plus c
-
-instead of assign b + c to a at this moment in time.
 
 !
 
@@ -287,7 +290,7 @@ instead of assign b + c to a at this moment in time.
 
 !
 
-# Yuck! Math D:
+# Yuck
 
 <style> input { width: 100px; } </style>
 <input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
@@ -432,7 +435,7 @@ instead of assign b + c to a at this moment in time.
 
 !
 
-# Getting Funky
+# FlatMap: Getting Funky
 
 ## Ajax
 
@@ -450,7 +453,7 @@ Username: <input id='username'> <span id=available></span>
 
   username.onValue(function(name) {
     doAjaxCall(name, function(result) {
-      $('#available').removeClass('waiting')
+      $('#available').text(result)
     });
   })
 </code>
@@ -476,18 +479,37 @@ Username: <input id='username'> <span id=available></span>
                       })
 
     username.onValue(function(name) {
-      doAjaxCall(name, function(result) {
+      doAjaxCall(name, function(result) { 
         $('#available').text(result)
       });
     })
 
 !
+
+Username: <input id='username'> <span id=available></span>
+
+    var username = $('#username')
+                      .asEventStream('keyup')
+                      .map(function(ev) {
+                        return $(ev.currentTarget).val()
+                      })
+
+    username.onValue(function(name) {
+      doAjaxCall(name, function(result) {  // <-- uh-oh, callback
+        $('#available').text(result);
+      });
+    })
+
+!
   
-# An AJAX request is a stream of one value
+# But wait, an AJAX request is a stream of one value
+
+      ...make request.......(wait)............result.....
+      -------|----------------------------------o--------
 
 !
 
-# An AJAX request is a stream of one value
+# Create a stream from an AJAX call
 
     function ajaxStream(query) {
       return Bacon.fromCallback(function(callback) {
@@ -495,18 +517,26 @@ Username: <input id='username'> <span id=available></span>
       })
     }
 
-    var ajaxStream = ajaxCall('foo')
+!
 
-<div data-stream='ajaxStream' data-title='' class='stream'></div>
+# But this won't work
+  
+    function ajaxStream(query) {
+      return Bacon.fromCallback(function(callback) {
+        doAjaxCall(query, callback)
+      })
+    }
+
+    username.map(ajaxStream)
 
 !
 
-# FlatMap
+# We need... FlatMap!
 
 <ul>
-<li>For every value on a stream
-<li>Create a new, AJAX, stream
-<li>And merge all the results back into a single stream
+  <li>For every value on an eventstream
+  <li>Create a new eventstream
+  <li>And merge all the results back into a single eventstream
 </ul>
 
     function ajaxStream(query) {
@@ -516,7 +546,6 @@ Username: <input id='username'> <span id=available></span>
     }
 
     username.flatMap(ajaxStream)
-
 
 !
 
@@ -555,3 +584,7 @@ Username: <input id='username'> <span id='available'></span>
                      
 <div data-stream='username' data-title='Username' class='stream'></div>
 <div data-stream='results' data-title='Results' class='stream'></div>
+
+!
+
+# There's so much more, go play!

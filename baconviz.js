@@ -20,8 +20,8 @@
     svg = d3.select(container).append('svg');
     svg.append('text').text(title).attr({
       x: 5,
-      y: 15
-    });
+      y: 20
+    }).attr('class', 'title');
     svg.append('svg:line').attr({
       x1: 0,
       x2: 600,
