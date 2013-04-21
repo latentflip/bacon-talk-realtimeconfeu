@@ -259,7 +259,7 @@ instead of assign b + c to a at this moment in time.
     var merged = minusOnes.merge(plusOnes)
     var score  = merged.scan(0, function(sum, value) {
                          return sum + value
-                       }).changes()
+                       })
 
 <div data-stream='merged' data-title='Merged' class='stream'></div>
 <div data-stream='score' data-title='Scanned' class='stream'></div>
@@ -277,7 +277,7 @@ instead of assign b + c to a at this moment in time.
     var score = minusOnes.merge(plusOnes)
                           .scan(0, function(sum, value) {
                             return sum + value
-                          }).changes()
+                          })
 
     score.assign($('#score'), 'text');
 
@@ -368,19 +368,30 @@ instead of assign b + c to a at this moment in time.
     var b = $('#b').asEventStream('keyup')
                       .map(inputVal).map(parseInt).filter(isNumber)
     
-    var answer = a.merge(b)
-
 <div data-stream='a' data-title='A' class='stream'></div>
 <div data-stream='b' data-title='B' class='stream'></div>
-<div data-stream='answer' data-title='Answer' class='stream'></div>
 
 !
 
 <style> input { width: 100px; } </style>
 <input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
 
-    function inputVal(ev) { return $(ev.currentTarget).val() }
-    function isNumber(n) { return n > 0 }
+    var a = $('#a').asEventStream('keyup')
+                      .map(inputVal).map(parseInt).filter(isNumber)
+
+    var b = $('#b').asEventStream('keyup')
+                      .map(inputVal).map(parseInt).filter(isNumber)
+    
+    var answer = a.merge(b)
+
+<div data-stream='a' data-title='A' class='stream'></div>
+<div data-stream='b' data-title='B' class='stream'></div>
+<div data-stream='answer' data-title='Answer: a.merge(b)' class='stream'></div>
+
+!
+
+<style> input { width: 100px; } </style>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
 
     var a = $('#a').asEventStream('keyup')
                       .map(inputVal).map(parseInt).filter(isNumber)
@@ -395,7 +406,7 @@ instead of assign b + c to a at this moment in time.
 
 <div data-stream='a' data-title='A' class='stream'></div>
 <div data-stream='b' data-title='B' class='stream'></div>
-<div data-stream='answer' data-title='Answer' class='stream'></div>
+<div data-stream='answer' data-title='Answer: a.combine(b, sum)' class='stream'></div>
 
 !
 
@@ -427,94 +438,120 @@ instead of assign b + c to a at this moment in time.
 
 !
 
+# Username availability checking
+
+Username: <input id='username'> <span id=available></span>
+
+<code style='display:none'>
+  var username = 
+    $('#username')
+        .asEventStream('keyup')
+        .map(function(ev) { return $(ev.currentTarget).val() })
+
+  username.onValue(function(name) {
+    doAjaxCall(name, function(result) {
+      $('#available').removeClass('waiting')
+    });
+  })
+</code>
+
+!
+
 Username: <input id='username'>
 
     var username =
       $('#username').asEventStream('keyup')
-                .map(function(ev) { return $(ev.currentTarget).val() })
-                .filter(function(username) { 
-                  return username.length >= 3
-                })
-                .skipDuplicates()
-                .debounce(250)
-                 
-<div data-stream='username' data-title='Username' class='stream'></div>
+                      .map(inputVal)
 
+<div data-stream='username' data-title='Username' class='stream'></div>
+                 
 !
 
 Username: <input id='username'> <span id=available></span>
 
-    var username = 
-      $('#username')
-          .asEventStream('keyup')
-          .map(function(ev) { return $(ev.currentTarget).val() })
+    var username = $('#username')
+                      .asEventStream('keyup')
+                      .map(function(ev) {
+                        return $(ev.currentTarget).val()
+                      })
 
     username.onValue(function(name) {
-      console.log(name)
       doAjaxCall(name, function(result) {
         $('#available').text(result)
       });
     })
 
+!
+  
+# An AJAX request is a stream of one value
 
 !
 
-Username: <input id='username'> <span id='available'></span>
+# An AJAX request is a stream of one value
 
-    var username = 
-      $('#username')
-          .asEventStream('keyup')
-          .map(function(ev) { return $(ev.currentTarget).val() })
-          .color()
-
-    function ajaxCall(query) {
+    function ajaxStream(query) {
       return Bacon.fromCallback(function(callback) {
         doAjaxCall(query, callback)
       })
     }
 
-    var results = username.flatMap(ajaxCall)
+    var ajaxStream = ajaxCall('foo')
+
+<div data-stream='ajaxStream' data-title='' class='stream'></div>
+
+!
+
+# FlatMap
+
+<ul>
+<li>For every value on a stream
+<li>Create a new, AJAX, stream
+<li>And merge all the results back into a single stream
+</ul>
+
+    function ajaxStream(query) {
+      return Bacon.fromCallback(function(callback) {
+        doAjaxCall(query, callback)
+      })
+    }
+
+    username.flatMap(ajaxStream)
+
+
+!
+
+Username: <input id='username'> <span id='available'></span>
+
+    function ajaxStream(query) {
+      return Bacon.fromCallback(function(callback) {
+        doAjaxCall(query, callback)
+      })
+    }
+
+    var username = $('#username')
+                .asEventStream('keyup').map(inputVal).color()
+
+    var results = username.flatMap(ajaxStream)
     results.assign( $('#available'), 'text')
                      
+<div data-stream='username' data-title='Username' class='stream'></div>
 <div data-stream='results' data-title='Results' class='stream'></div>
 
 !
 
 Username: <input id='username'> <span id='available'></span>
 
-    var username = 
-      $('#username')
-          .asEventStream('keyup')
-          .map(function(ev) { return $(ev.currentTarget).val() })
-          .color()
-    
-    function ajaxCall(query) {
+    function ajaxStream(query) {
       return Bacon.fromCallback(function(callback) {
         doAjaxCall(query, callback)
       })
     }
 
-    var results = username.flatMap(ajaxCall)
+    var username = $('#username')
+                .asEventStream('keyup').map(inputVal).color()
+
+    var results = username.flatMapLatest(ajaxStream)
     results.assign( $('#available'), 'text')
                      
-<div data-stream='results' data-title='Results' class='stream'></div>
-!
-
-Username: <input id='username'> <span id='available'></span>
-
-    var username = 
-      $('#username')
-          .asEventStream('keyup')
-          .map(function(ev) { return $(ev.currentTarget).val() })
-          .color()
-    
-    function ajaxCall(query) {
-      return Bacon.fromCallback(function(callback) {
-        doAjaxCall(query, callback)
-      })
-    }
-
-    var results = username.flatMapLatest(ajaxCall)
-    results.assign( $('#available'), 'text')
-                     
+<div data-stream='username' data-title='Username' class='stream'></div>
 <div data-stream='results' data-title='Results' class='stream'></div>
