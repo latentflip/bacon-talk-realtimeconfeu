@@ -46,6 +46,8 @@ Present.reload();
 
 $('#next').click(function() {Present.nextSlide(); return false})
 $('#prev').click(function() {Present.prevSlide(); return false})
+$('#next').on('touchend', function() {Present.nextSlide(); return false})
+$('#prev').on('touchend', function() {Present.prevSlide(); return false})
 $(document).keydown(function(e){
     if (e.keyCode == 37) {
        Present.prevSlide();
