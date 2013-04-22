@@ -1,10 +1,10 @@
 # Functional Reactive Programming and Bacon.js
-@philip_roberts
+### @philip_roberts
 
 !
 
 # Making life a lot easier by making it a little more complicated first
-@philip_roberts
+### @philip_roberts
 
 !
 
@@ -293,7 +293,7 @@ meant a _always equals_ b plus c, at any time
 # Yuck
 
 <style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly tabindex=-1/>
 
     var a=0, b=0;
   
@@ -315,7 +315,7 @@ meant a _always equals_ b plus c, at any time
 # Yay! Math! :D
 
 <style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly tabindex=-1/>
 
     var a = $('#a').asEventStream('keyup')
 
@@ -326,7 +326,7 @@ meant a _always equals_ b plus c, at any time
 # Yay! Math! :D
 
 <style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly tabindex=-1/>
 
     function inputVal(ev) {
       return $(ev.currentTarget).val()
@@ -340,7 +340,7 @@ meant a _always equals_ b plus c, at any time
 !
 
 <style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly tabindex=-1/>
 
     function inputVal(ev) {
       return $(ev.currentTarget).val()
@@ -353,14 +353,14 @@ meant a _always equals_ b plus c, at any time
                       .map(inputVal)
                       .map(parseInt)
                       .filter(isNumber)
-                      .debounce(150)
+                      .debounce(300)
 
 <div data-stream='a' data-title='A' class='stream'></div>
 
 !
 
 <style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly tabindex=-1/>
 
     function inputVal(ev) { return $(ev.currentTarget).val() }
     function isNumber(n) { return n > 0 }
@@ -377,7 +377,7 @@ meant a _always equals_ b plus c, at any time
 !
 
 <style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly tabindex=-1/>
 
     var a = $('#a').asEventStream('keyup')
                       .map(inputVal).map(parseInt).filter(isNumber)
@@ -394,7 +394,7 @@ meant a _always equals_ b plus c, at any time
 !
 
 <style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly tabindex=-1/>
 
     var a = $('#a').asEventStream('keyup')
                       .map(inputVal).map(parseInt).filter(isNumber)
@@ -414,7 +414,7 @@ meant a _always equals_ b plus c, at any time
 !
 
 <style> input { width: 100px; } </style>
-<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly/>
+<input id='a' value='0'/> + <input id='b' value='0'/> = <input id='answer' readonly tabindex=-1/>
 
     function inputVal(ev) { return $(ev.currentTarget).val() }
     function isNumber(n) { return n > 0 }
@@ -587,4 +587,12 @@ Username: <input id='username'> <span id='available'></span>
 
 !
 
-# There's so much more, go play!
+# Thank You!
+
+Further reading
+
+* __Haskell_ 
+* __RxJS:__ https://github.com/Reactive-Extensions/RxJS
+* __Bacon.js:__ https://github.com/raimohanska/bacon.js
+
+@philip\_roberts
