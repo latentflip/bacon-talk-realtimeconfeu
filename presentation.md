@@ -591,7 +591,7 @@ Username: <input id='username'> <span id='available'></span>
 
 Further reading
 
-* __Haskell_ 
+* __Haskell__ 
 * __RxJS:__ https://github.com/Reactive-Extensions/RxJS
 * __Bacon.js:__ https://github.com/raimohanska/bacon.js
 
