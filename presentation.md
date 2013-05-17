@@ -1,10 +1,10 @@
 # Functional Reactive Programming and Bacon.js
-### @philip_roberts
+### by [@philip_roberts](http://twitter.com/philip_roberts) of [latentflip.com](http://latentflip.com) and [floatapp.com](http://floatapp.com)
 
 !
 
 # Making life a lot easier by making it a little more complicated first
-### @philip_roberts
+### by [@philip_roberts](http://twitter.com/philip_roberts) of [latentflip.com](http://latentflip.com) and [floatapp.com](http://floatapp.com)
 
 !
 
@@ -595,4 +595,4 @@ Further reading
 * __RxJS:__ https://github.com/Reactive-Extensions/RxJS
 * __Bacon.js:__ https://github.com/raimohanska/bacon.js
 
-@philip\_roberts
+by [@philip_roberts](http://twitter.com/philip_roberts) of [latentflip.com](http://latentflip.com) and [floatapp.com](http://floatapp.com)
